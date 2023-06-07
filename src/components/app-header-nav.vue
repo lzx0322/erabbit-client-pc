@@ -1,36 +1,36 @@
 <template>
   <ul class="app-header-nav">
     <li class="home"><RouterLink to="/">首页</RouterLink></li>
-    <li>
-      <a href="#">美食</a>
+    <li v-for="item in list" :key="item.id">
+      <router-link to="/">{{ item.name }}</router-link>
       <div class="layer">
         <ul>
-          <li v-for="i in 10" :key="i">
-            <a href="#">
-              <img
-                src="http://zhoushugang.gitee.io/erabbit-client-pc-static/uploads/img/category%20(4).png"
-                alt=""
-              />
-              <p>果干</p>
-            </a>
+          <li v-for="sub in item.children" :key="sub.id">
+            <router-link to="/">
+              <img :src="sub.picture" alt="" />
+              <p>{{ sub.name }}</p>
+            </router-link>
           </li>
         </ul>
       </div>
     </li>
-    <li><a href="#">餐厨</a></li>
-    <li><a href="#">艺术</a></li>
-    <li><a href="#">电器</a></li>
-    <li><a href="#">居家</a></li>
-    <li><a href="#">洗护</a></li>
-    <li><a href="#">孕婴</a></li>
-    <li><a href="#">服装</a></li>
-    <li><a href="#">杂货</a></li>
   </ul>
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { computed } from 'vue'
 export default {
-  name: 'AppHeaderNav'
+  name: 'AppHeaderNav',
+  // eslint-disable-next-line space-before-function-paren
+  setup() {
+    const store = useStore()
+    // 拿到 vuex 中的分类列表
+    const list = computed(() => {
+      return store.state.category.list
+    })
+    return { list }
+  }
 }
 </script>
 
@@ -41,20 +41,61 @@ export default {
   padding-left: 40px;
   position: relative;
   z-index: 998;
-  li {
+  > li {
     margin-right: 40px;
     width: 38px;
     text-align: center;
-    a {
+    > a {
       font-size: 16px;
       line-height: 32px;
       height: 32px;
       display: inline-block;
     }
     &:hover {
-      a {
+      > a {
         color: @xtxColor;
         border-bottom: 1px solid @xtxColor;
+      }
+      // 显示二级类目
+      .layer {
+        height: 132px;
+        opacity: 1;
+      }
+    }
+  }
+}
+// 二级类目弹层
+.layer {
+  width: 1240px;
+  background-color: #fff;
+  position: absolute;
+  left: -200px;
+  top: 56px;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  box-shadow: 0 0 5px #ccc;
+  transition: all 0.2s 0.1s;
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 70px;
+    align-items: center;
+    height: 132px;
+    li {
+      width: 110px;
+      text-align: center;
+      img {
+        width: 60px;
+        height: 60px;
+      }
+      p {
+        padding-top: 10px;
+      }
+      &:hover {
+        p {
+          color: @xtxColor;
+        }
       }
     }
   }

@@ -16,12 +16,19 @@
 import AppNavbar from '@/components/app-topnav.vue'
 import AppHeader from '@/components/app-header.vue'
 import AppFooter from '@/components/app-footer.vue'
+import { useStore } from 'vuex'
 export default {
   name: 'Layout',
   components: {
     AppNavbar,
     AppHeader,
     AppFooter
+  },
+  // 获取分类数据
+  // eslint-disable-next-line space-before-function-paren
+  setup() {
+    const store = useStore()
+    store.dispatch('category/getList')
   }
 }
 </script>
