@@ -1,5 +1,6 @@
 <template>
-  <div class="container">App</div>
+  <!-- 一级路由 -->
+  <router-view></router-view>
 </template>
 
 <script>
