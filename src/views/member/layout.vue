@@ -3,10 +3,12 @@
   <app-navbar></app-navbar>
   <!-- 头部组件-->
   <app-header></app-header>
+  <!-- 吸顶头部组件 -->
+  <app-header-sticky></app-header-sticky>
   <!-- 内容容器 -->
   <div class="main">
     <!-- 二级路由 -->
-    <router-view></router-view>
+    <home-page></home-page>
   </div>
   <!-- 底部组件 -->
   <app-footer></app-footer>
@@ -16,13 +18,17 @@
 import AppNavbar from '@/components/app-topnav.vue'
 import AppHeader from '@/components/app-header.vue'
 import AppFooter from '@/components/app-footer.vue'
+import AppHeaderSticky from '@/components/app-header-sticky.vue'
+import HomePage from '@/views/home/index.vue'
 import { useStore } from 'vuex'
 export default {
   name: 'Layout',
   components: {
     AppNavbar,
     AppHeader,
-    AppFooter
+    AppFooter,
+    AppHeaderSticky,
+    HomePage
   },
   // 获取分类数据
   // eslint-disable-next-line space-before-function-paren
@@ -33,4 +39,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="less" scoped>
+.main {
+  height: 1000px;
+}
+</style>
