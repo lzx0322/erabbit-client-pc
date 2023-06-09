@@ -1,7 +1,8 @@
 <template>
-  <div class="home-category">
+  <div class="home-category" @mouseleave="categoryId = null">
     <ul class="menu">
       <li
+        :class="{ active: categoryId === item.id }"
         v-for="item in menuList"
         :key="item.id"
         @mouseenter="categoryId = item.id"
@@ -15,11 +16,29 @@
             >{{ sub.name }}</RouterLink
           >
         </template>
+        <!-- 骨架 -->
+        <template v-else>
+          <xtx-skeleton
+            width="60px"
+            height="18px"
+            style="margin-right: 5px"
+            bg="rgba(255,255,255,0.2)"
+          ></xtx-skeleton>
+          <xtx-skeleton
+            width="50px"
+            height="18px"
+            bg="rgba(255,255,255,0.2)"
+          ></xtx-skeleton>
+        </template>
       </li>
     </ul>
     <!-- 弹层 -->
     <div class="layer">
-      <h4>分类推荐 <small>根据您的购买或浏览记录推荐</small></h4>
+      <!-- 商品 -->
+      <h4>
+        {{ currCategory && currCategory.id === 'brand' ? '品牌' : '分类' }}推荐
+        <small>根据您的购买或浏览记录推荐</small>
+      </h4>
       <ul v-if="currCategory && currCategory.goods">
         <li v-for="item in currCategory.goods" :key="item.id">
           <RouterLink to="/">
@@ -32,6 +51,21 @@
           </RouterLink>
         </li>
       </ul>
+      <!-- 品牌 -->
+      <ul v-if="currCategory && currCategory.brands">
+        <li class="brand" v-for="brand in currCategory.brands" :key="brand.id">
+          <RouterLink to="/">
+            <img :src="brand.picture" alt="" />
+            <div class="info">
+              <p class="place">
+                <i class="iconfont icon-dingwei"></i>{{ brand.place }}
+              </p>
+              <p class="name ellipsis">{{ brand.name }}</p>
+              <p class="desc ellipsis-2">{{ brand.desc }}</p>
+            </div>
+          </RouterLink>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -39,6 +73,7 @@
 <script>
 import { computed, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
+import { findBrand } from '@/api/home'
 export default {
   name: 'HomeCategory',
   // eslint-disable-next-line space-before-function-paren
@@ -48,7 +83,9 @@ export default {
     const brand = reactive({
       id: 'brand',
       name: '品牌',
-      children: [{ id: 'brand-children', name: '品牌推荐' }]
+      children: [{ id: 'brand-children', name: '品牌推荐' }],
+      // 品牌列表
+      brands: []
     })
     const menuList = computed(() => {
       // 得到9个分类且每个一级分类下的子分类只有两个
@@ -68,6 +105,11 @@ export default {
     const currCategory = computed(() => {
       return menuList.value.find(item => item.id === categoryId.value)
     })
+    // 获取品牌数据
+    // 尽量不在 setup 上使用 async
+    findBrand().then(data => {
+      brand.brands = data.result
+    })
     return { menuList, categoryId, currCategory }
   }
 }
@@ -85,7 +127,8 @@ export default {
       padding-left: 40px;
       height: 50px;
       line-height: 50px;
-      &:hover {
+      &:hover,
+      &.active {
         background: @xtxColor;
       }
       a {
@@ -164,12 +207,43 @@ export default {
           }
         }
       }
+      // 品牌的样式
+      li.brand {
+        height: 180px;
+        a {
+          align-items: flex-start;
+          img {
+            width: 120px;
+            height: 160px;
+          }
+          .info {
+            p {
+              margin-top: 8px;
+            }
+            .place {
+              color: #999;
+            }
+          }
+        }
+      }
     }
   }
   &:hover {
     .layer {
       display: block;
     }
+  }
+}
+// 骨架动画
+.xtx-skeleton {
+  animation: fade 1s linear infinite alternate;
+}
+@keyframes fade {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
   }
 }
 </style>
