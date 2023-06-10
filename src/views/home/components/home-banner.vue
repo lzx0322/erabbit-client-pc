@@ -1,11 +1,22 @@
 <template>
   <div class="home-banner">
-    <XtxCarousel />
+    <XtxCarousel auto-play :sliders="sliders" />
   </div>
 </template>
 <script>
+import { ref } from 'vue'
+import { findBanner } from '@/api/home'
 export default {
-  name: 'HomeBanner'
+  name: 'HomeBanner',
+  // eslint-disable-next-line space-before-function-paren
+  setup() {
+    // 获取轮播图数据
+    const sliders = ref([])
+    findBanner().then(data => {
+      sliders.value = data.result
+    })
+    return { sliders }
+  }
 }
 </script>
 <style scoped lang="less">
