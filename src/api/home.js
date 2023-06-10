@@ -16,3 +16,13 @@ export const findBrand = (limit = 6) => {
 export const findBanner = () => {
   return request('/home/banner', 'get')
 }
+/**
+ * 获取人气推荐
+ * @returns Promise
+ */
+export const findNew = () => {
+  return request('home/new', 'get')
+}
+export const findHot = () => {
+  return request('home/hot', 'get')
+}
